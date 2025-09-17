@@ -1,0 +1,102 @@
+.side-menu {
+    position: absolute;
+    top:0;
+    background-color:#fff;
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s;
+    padding-top: 40px;
+    z-index: 100;
+}
+.side-menu-list {
+    display: flex;
+    flex-direction: column;
+}
+.side-menu>button{
+    font-size: 25px;
+    font-weight: 900;
+    border: none;
+    background-color: #fff;
+    display: block;
+    margin-left: auto;
+    position: absolute;
+    top: 0;
+    right: 25px;
+    z-index:2000;
+}
+.side-menu-list button {
+    border: none;
+    padding: 5px;
+    background-color: #fff;
+}
+.side-menu-list button:hover {
+    background-color: lightgray;
+}
+.head-line-section {
+    position: relative;
+}
+.mini-bar {
+    height: 50px;
+    margin-top: 20px;
+}
+
+.head-line-section .hamburger {
+    margin-top: 5px;
+    font-size: 22px;
+    cursor: pointer;
+    display: none;
+}
+.search-check {
+    font-size: 22px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.input-area {
+    position: absolute;
+    left: 60px;
+    display: none; 
+  
+}
+.input-area.active {
+    display: inline;
+   
+}
+.head-line {
+    margin-top: 1em;
+    display: flex;
+    justify-content: center;
+}
+.head-line svg {
+    width: 430px;
+}
+.menus {
+    margin-top: 1em;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 4px double #000;
+}
+.menus button {
+    background-color:#fff;
+    border: none;
+    padding: 10px;
+
+}
+.menus button:hover {
+    background-color: lightgray;
+}
+.news-img-size {
+    max-width: 100%;
+    max-height: 250px;
+}
+.news {
+    border-bottom: 1px solid lightgray;
+}
+@media screen and (max-width:992px) {
+    .head-line-section .hamburger {
+        display:inline-block;
+    }
+    .menus {
+        display: none;
+    }
+}
