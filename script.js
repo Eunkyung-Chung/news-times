@@ -6,13 +6,13 @@
 let newsList =[];
 //1. 메뉴 버튼들에 클릭이벤트 주기
 const menus = document.querySelectorAll(".menus button");
-console.log("mmm", menus);
+// console.log("mmm", menus);
 menus.forEach((menu) => menu.addEventListener("click", (event) => 
     getNewsByCategory(event)));
 
 //1-1. side-menu버튼에 클릭이벤트
 const sideMenus = document.querySelectorAll(".side-menu-list button");
-console.log("sss", sideMenus);
+// console.log("sss", sideMenus);
 sideMenus.forEach((menu) => menu.addEventListener("click", (event) =>
     getNewsByCategory(event)));
 
@@ -22,15 +22,46 @@ const searchButton = document.querySelector(".input-area button");
 searchButton.addEventListener("click", (event) => 
 getNewsByKeyword(event));
 
+//검색창에 enter key 눌렀을때 키워드별 뉴스 검색
+function enterKey() {
+    if (window.event.keyCode == 13){
+        getNewsByKeyword();
+    }
+}
+
+//code refactoring --> url을 전역변수로
+let url = new URL (`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us`);
+
+//code refactoring --> 중복되는 코드 따로 모아서 함수로
+const getNews = async() => {
+    let data = null;
+    try {
+        const response = await fetch(url);
+        console.log("rrr",response);
+        data = await response.json();
+        console.log("ddd", data);
+        //조건에 따라 강제로 에러 발생 시키기
+        if (response.status !== 200) {
+            throw new Error(data.message);
+        } else if (data.articles.length === 0) {
+            throw new Error("No matches for your search");
+        }
+       
+    }catch(error) {
+        render(error);
+        console.log("error", error.message);
+        return;
+    }
+     console.log("data", data);
+     newsList = data.articles;
+     console.log("newsList", newsList);
+     render();
+}
+
 const getLatestNews = async () => {
-    //url instance만들기((
-    const url = new URL (`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=kr`);
-    // console.log(url);
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    render();
-    console.log(newsList);
+    //url instance만들기
+    url = new URL (`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us`);
+    getNews();
 };
 
 
@@ -38,14 +69,8 @@ const getLatestNews = async () => {
 const getNewsByCategory = async (event) => {
     const category = event.target.textContent.toLowerCase(); 
     console.log("category", category);
-    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?category=${category}`)
-
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    console.log("ddd", newsList);
-    //3. 그 뉴스 가져오기
-    render();
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&category=${category}`)
+    getNews();  
 };
 
 //2-1.키워드별 뉴스 가져오기
@@ -53,19 +78,21 @@ const getNewsByKeyword = async(event) => {
     // console.log("goclick");
     const keyword = document.querySelector(".search-input").value;
     // console.log("keyword",keyword);
-    const url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?q=${keyword}`);
-
-    const response = await fetch(url);
-    const data = await response.json();
-    newsList = data.articles;
-    console.log("kkk", newsList);
-    //3-1.그 뉴스 가져오기
-    render();
+    url = new URL(`https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&q=${keyword}`);
+    getNews();
 }
 
-const render = () => {
+const render = (error) => {
+    let newsHTML = '';
+    if(error) {
+        //bootstrap>component>alert
+        newsHTML = ` 
+        <div class="alert alert-danger" role="alert">
+            ${error.message}
+        </div>`;
+    } else {
 
-    const newsHTML =  newsList.map(news => `
+    newsHTML =  newsList.map(news => `
             <div class="row news">
                <div class="col-lg-4">
                   <img
@@ -83,7 +110,7 @@ const render = () => {
                </div>
             </div>
         `).join('');
-
+    }
         // console.log("html", newsHTML);
 
     document.getElementById('news-board').innerHTML = newsHTML;
